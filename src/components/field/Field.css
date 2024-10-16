@@ -1,0 +1,28 @@
+.field_wrapper {
+	width: 300px;
+	height: 300px;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.field_square {
+	width: 100px;
+	height: 100px;
+	background: #fff;
+	border: 1px solid #222222;
+	cursor: pointer;
+	outline: none;
+	font-size: 60px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transition: background-color 0.3s ease;
+	flex-direction: column;
+}
+.field_square:active {
+	transform: scale(0.98);
+}
+
+.field_square:focus {
+	outline: none;
+}
