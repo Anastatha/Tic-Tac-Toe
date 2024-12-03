@@ -1,0 +1,28 @@
+.game {
+	min-height: 100vh;
+	width: 100%;
+	background: #222222;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
+
+.restart {
+	font-size: 1.5rem;
+	margin-top: 50px;
+	padding: 10px 20px;
+	cursor: pointer;
+	outline: none;
+	border: none;
+	background-color: #fff;
+	transition: background-color 0.3s ease;
+}
+
+.restart:active {
+	transform: scale(0.98);
+}
+
+.restart:focus {
+	outline: none;
+}
