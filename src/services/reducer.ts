@@ -1,4 +1,4 @@
-interface State {
+export interface State {
   field: string[];
   currentPlayer: "X" | "0";
   isGameEnded: boolean;

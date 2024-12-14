@@ -1,9 +1,13 @@
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../services/store";
 import "./Field.css";
-import { store } from "../../services/store";
 
 const Field: React.FC = () => {
-  const { field, currentPlayer, isGameEnded } = store.getState();
+  const { field, currentPlayer, isGameEnded } = useSelector(
+    (state: RootState) => state
+  );
+  const dispatch = useDispatch();
 
   const handleCellClick = (index: number) => {
     if (field[index] || isGameEnded) return;
@@ -32,31 +36,31 @@ const Field: React.FC = () => {
     });
 
     if (hasWinner) {
-      store.dispatch({
+      dispatch({
         type: "SET_FIELD",
         payload: { index, value: currentPlayer },
       });
-      store.dispatch({ type: "SET_WINNER", payload: currentPlayer });
-      store.dispatch({ type: "SET_GAME_ENDED", payload: true });
+      dispatch({ type: "SET_WINNER", payload: currentPlayer });
+      dispatch({ type: "SET_GAME_ENDED", payload: true });
       return;
     }
 
     const isDraw = newField.every((cell) => cell);
     if (isDraw) {
-      store.dispatch({
+      dispatch({
         type: "SET_FIELD",
         payload: { index, value: currentPlayer },
       });
-      store.dispatch({ type: "SET_DRAW", payload: true });
-      store.dispatch({ type: "SET_GAME_ENDED", payload: true });
+      dispatch({ type: "SET_DRAW", payload: true });
+      dispatch({ type: "SET_GAME_ENDED", payload: true });
       return;
     }
 
-    store.dispatch({
+    dispatch({
       type: "SET_FIELD",
       payload: { index, value: currentPlayer },
     });
-    store.dispatch({
+    dispatch({
       type: "SET_CURRENT_PLAYER",
       payload: currentPlayer === "X" ? "0" : "X",
     });

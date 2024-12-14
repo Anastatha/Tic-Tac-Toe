@@ -1,17 +1,16 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../services/store";
 import "./Information.css";
-import { store } from "../../services/store";
 
 const Information: React.FC = () => {
-  const { currentPlayer, isGameEnded, isDraw, winner } = store.getState();
+  const { currentPlayer, isGameEnded, isDraw, winner } = useSelector(
+    (state: RootState) => state
+  );
 
   let status;
   if (isGameEnded) {
-    if (isDraw) {
-      status = "Ничья";
-    } else {
-      status = `Победитель: ${winner}`;
-    }
+    status = isDraw ? "Ничья" : `Победитель: ${winner}`;
   } else {
     status = `Ходит: ${currentPlayer}`;
   }

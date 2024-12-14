@@ -1,11 +1,13 @@
 import React from "react";
-import Field from "../field/Field";
 import Information from "../information/Information";
+import Field from "../field/Field";
+import { useDispatch } from "react-redux";
 import "./GameLayout.css";
-import { store } from "../../services/store";
 
 const GameLayout: React.FC = () => {
-  const resetGame = () => store.dispatch({ type: "RESET_GAME" });
+  const dispatch = useDispatch();
+
+  const resetGame = () => dispatch({ type: "RESET_GAME" });
 
   return (
     <div className="game">
