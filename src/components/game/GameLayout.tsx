@@ -1,23 +1,33 @@
-import React from "react";
+import { Component } from "react";
 import Information from "../information/Information";
 import Field from "../field/Field";
-import { useDispatch } from "react-redux";
-import "./GameLayout.css";
+import { connect } from "react-redux";
 
-const GameLayout: React.FC = () => {
-  const dispatch = useDispatch();
+interface Props {
+  resetGame: () => void;
+}
 
-  const resetGame = () => dispatch({ type: "RESET_GAME" });
+class GameLayout extends Component<Props> {
+  render() {
+    const { resetGame } = this.props;
 
-  return (
-    <div className="game">
-      <Information />
-      <Field />
-      <button className="restart" onClick={resetGame}>
-        Начать заново
-      </button>
-    </div>
-  );
-};
+    return (
+      <div className="flex flex-col justify-center items-center min-h-screen bg-gray-800">
+        <Information />
+        <Field />
+        <button
+          className="mt-10 px-5 py-3 text-lg font-medium bg-white rounded shadow hover:bg-gray-200 focus:outline-none active:scale-95"
+          onClick={resetGame}
+        >
+          Начать заново
+        </button>
+      </div>
+    );
+  }
+}
 
-export default GameLayout;
+const mapDispatchToProps = (dispatch: any) => ({
+  resetGame: () => dispatch({ type: "RESET_GAME" }),
+});
+
+export default connect(null, mapDispatchToProps)(GameLayout);

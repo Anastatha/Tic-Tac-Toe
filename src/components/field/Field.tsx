@@ -1,84 +1,90 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { Component } from "react";
+import { connect } from "react-redux";
 import { RootState } from "../../services/store";
-import "./Field.css";
+import { checkWinner, checkDraw } from "../../utils/gameUtils";
 
-const Field: React.FC = () => {
-  const { field, currentPlayer, isGameEnded } = useSelector(
-    (state: RootState) => state
-  );
-  const dispatch = useDispatch();
+interface Props {
+  field: string[];
+  currentPlayer: "X" | "0";
+  isGameEnded: boolean;
+  setField: (index: number, value: string) => void;
+  setWinner: (winner: "X" | "0" | null) => void;
+  setDraw: (isDraw: boolean) => void;
+  setCurrentPlayer: (player: "X" | "0") => void;
+  setGameEnded: (ended: boolean) => void;
+}
 
-  const handleCellClick = (index: number) => {
+class Field extends Component<Props> {
+  handleCellClick = (index: number) => {
+    const {
+      field,
+      currentPlayer,
+      isGameEnded,
+      setField,
+      setWinner,
+      setDraw,
+      setCurrentPlayer,
+      setGameEnded,
+    } = this.props;
+
     if (field[index] || isGameEnded) return;
 
     const newField = [...field];
     newField[index] = currentPlayer;
 
-    const WIN_PATTERNS = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
-
-    const hasWinner = WIN_PATTERNS.some((pattern) => {
-      const [a, b, c] = pattern;
-      return (
-        newField[a] === currentPlayer &&
-        newField[b] === currentPlayer &&
-        newField[c] === currentPlayer
-      );
-    });
-
-    if (hasWinner) {
-      dispatch({
-        type: "SET_FIELD",
-        payload: { index, value: currentPlayer },
-      });
-      dispatch({ type: "SET_WINNER", payload: currentPlayer });
-      dispatch({ type: "SET_GAME_ENDED", payload: true });
+    if (checkWinner(newField, currentPlayer)) {
+      setField(index, currentPlayer);
+      setWinner(currentPlayer);
+      setGameEnded(true);
       return;
     }
 
-    const isDraw = newField.every((cell) => cell);
-    if (isDraw) {
-      dispatch({
-        type: "SET_FIELD",
-        payload: { index, value: currentPlayer },
-      });
-      dispatch({ type: "SET_DRAW", payload: true });
-      dispatch({ type: "SET_GAME_ENDED", payload: true });
+    if (checkDraw(newField)) {
+      setField(index, currentPlayer);
+      setDraw(true);
+      setGameEnded(true);
       return;
     }
 
-    dispatch({
-      type: "SET_FIELD",
-      payload: { index, value: currentPlayer },
-    });
-    dispatch({
-      type: "SET_CURRENT_PLAYER",
-      payload: currentPlayer === "X" ? "0" : "X",
-    });
+    setField(index, currentPlayer);
+    setCurrentPlayer(currentPlayer === "X" ? "0" : "X");
   };
 
-  return (
-    <div className="field_wrapper">
-      {field.map((cell, index) => (
-        <button
-          className="field_square"
-          key={index}
-          onClick={() => handleCellClick(index)}
-        >
-          {cell}
-        </button>
-      ))}
-    </div>
-  );
-};
+  render() {
+    const { field } = this.props;
 
-export default Field;
+    return (
+      <div className="grid grid-cols-3 gap-1 w-[300px] h-[300px]">
+        {field.map((cell, index) => (
+          <button
+            key={index}
+            className="w-[100px] h-[100px] bg-white border border-gray-900 text-6xl flex justify-center items-center hover:bg-gray-100 focus:outline-none active:scale-95"
+            onClick={() => this.handleCellClick(index)}
+          >
+            {cell}
+          </button>
+        ))}
+      </div>
+    );
+  }
+}
+
+const mapStateToProps = (state: RootState) => ({
+  field: state.field,
+  currentPlayer: state.currentPlayer,
+  isGameEnded: state.isGameEnded,
+});
+
+const mapDispatchToProps = (dispatch: any) => ({
+  setField: (index: number, value: string) =>
+    dispatch({ type: "SET_FIELD", payload: { index, value } }),
+  setWinner: (winner: "X" | "0" | null) =>
+    dispatch({ type: "SET_WINNER", payload: winner }),
+  setDraw: (isDraw: boolean) => dispatch({ type: "SET_DRAW", payload: isDraw }),
+  setCurrentPlayer: (player: "X" | "0") =>
+    dispatch({ type: "SET_CURRENT_PLAYER", payload: player }),
+  setGameEnded: (ended: boolean) =>
+    dispatch({ type: "SET_GAME_ENDED", payload: ended }),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Field);

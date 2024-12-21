@@ -1,21 +1,34 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import { Component } from "react";
+import { connect } from "react-redux";
 import { RootState } from "../../services/store";
-import "./Information.css";
 
-const Information: React.FC = () => {
-  const { currentPlayer, isGameEnded, isDraw, winner } = useSelector(
-    (state: RootState) => state
-  );
+interface Props {
+  currentPlayer: "X" | "0";
+  isGameEnded: boolean;
+  isDraw: boolean;
+  winner: "X" | "0" | null;
+}
 
-  let status;
-  if (isGameEnded) {
-    status = isDraw ? "Ничья" : `Победитель: ${winner}`;
-  } else {
-    status = `Ходит: ${currentPlayer}`;
+class Information extends Component<Props> {
+  render() {
+    const { currentPlayer, isGameEnded, isDraw, winner } = this.props;
+
+    let status;
+    if (isGameEnded) {
+      status = isDraw ? "Ничья" : `Победитель: ${winner}`;
+    } else {
+      status = `Ходит: ${currentPlayer}`;
+    }
+
+    return <div className="text-2xl text-white mb-5">{status}</div>;
   }
+}
 
-  return <div className="information">{status}</div>;
-};
+const mapStateToProps = (state: RootState) => ({
+  currentPlayer: state.currentPlayer,
+  isGameEnded: state.isGameEnded,
+  isDraw: state.isDraw,
+  winner: state.winner,
+});
 
-export default Information;
+export default connect(mapStateToProps)(Information);
